@@ -1,0 +1,46 @@
+@startuml Single Page Version
+skinparam SequenceMessageAlignment center
+skinparam responseMessageBelowArrow false
+
+note across #Aqua: This is UML Unified Modeling Language using PlantUML in VScode
+
+actor User
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/notes
+server-->browser: HTML-code
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/main.css
+server-->browser: main.css
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/main.js
+server-->browser: main.js
+note right of browser
+browser starts executing js-code
+that requests JSON data from server
+<i>xhttp.send()</i>
+end note
+browser-->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/data.json
+server->browser: Status 200; application/json
+note left of server #Orange
+json data with current notes
+end note
+note right of browser
+browser executes the event handler
+that renders notes to display
+<i>xhttp.onreadystatechange ...</i>
+end note
+User->browser: type in note
+User->browser: hit submit button
+note right of browser
+Submit is handled by javascript: form.onsubmit
+- append note <i>notes.push(note)</i>
+- redraw notes <i>redrawNotes()</i>
+- send to server <i>sendToServer(note)</i>
+end note
+browser->server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa
+note right of browser #LightGreen
+{content: "my new note", date: "2022-05-05T15:09:23.684Z"}
+end note
+server-->browser: Status: 201; application/json
+note left of server #Orange
+{"message":"note created"}
+end note
+
+@enduml
