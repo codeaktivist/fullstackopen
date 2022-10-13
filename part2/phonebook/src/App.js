@@ -1,5 +1,51 @@
 import { useState } from 'react'
 
+const Search = ({ search, onChangeSearchHandler }) => {
+    return (
+        <div>
+            Search for: <input
+            value={search}
+            onChange={onChangeSearchHandler}/>
+        </div>
+    )
+}
+
+const Table = ({person, search }) => {
+    return(
+        <table>
+        <tbody>
+            {person.map((person) => {
+                if (person.name.search(RegExp(search, 'i')) > -1)
+                {
+                return(
+                    <tr key={person.id}>
+                        <td>{person.name}</td>
+                        <td>{person.number}</td>
+                    </tr>)}
+                return true
+            })}
+        </tbody>
+    </table>
+    )
+}
+
+const Form = ({ onSubmitHandler, onChangeNameHandler, newName, onChangeNumberHandler, newNumber}) => {
+    return(
+        <form onSubmit={onSubmitHandler}>
+            <div>
+                name: <input
+                    value={newName}
+                    onChange={onChangeNameHandler}/>
+            </div>
+            <div>
+                number: <input
+                    value={newNumber}
+                    onChange={onChangeNumberHandler}/>
+            </div>
+            <button type='submit'>Add</button>
+        </form>
+    )
+}
 
 const App = () => {
     const [person, setPerson] = useState([
@@ -33,39 +79,24 @@ const App = () => {
 
     return (
     <>
-    <h2>Phonebook</h2>
-        Search for: <input
-            value={search}
-            onChange={onChangeSearchHandler}/>
-    <h2>Add new</h2>
-    <form onSubmit={onSubmitHandler}>
-        <div>
-            name: <input
-                value={newName}
-                onChange={onChangeNameHandler}/>
-        </div>
-        <div>
-            number: <input
-                value={newNumber}
-                onChange={onChangeNumberHandler}/>
-        </div>
-        <button type='submit'>Add</button>
-    </form>
-    <h2>Numbers</h2>
-    <table>
-        <tbody>
-            {person.map((person) => {
-                if (person.name.search(RegExp(search, 'i')) > -1)
-                {
-                return(
-                    <tr key={person.id}>
-                        <td>{person.name}</td>
-                        <td>{person.number}</td>
-                    </tr>)}
-                return true
-})}
-        </tbody>
-    </table>
+        <h2>Phonebook</h2>
+        <Search
+            search={search}
+            onChangeSearchHandler={onChangeSearchHandler}
+        />
+        <h3>Add new</h3>
+        <Form 
+            onSubmitHandler={onSubmitHandler}
+            onChangeNameHandler={onChangeNameHandler}
+            newName={newName}
+            newNumber={newNumber}
+            onChangeNumberHandler={onChangeNumberHandler}
+        />
+        <h3>Numbers</h3>
+        <Table
+            person={person}
+            search={search}
+        />
     </>
 )}
 
