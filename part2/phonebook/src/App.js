@@ -9,12 +9,16 @@ const App = () => {
         { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 }])
     const [newName, setNewName] = useState('')
     const [newNumber, setNewNumber] = useState('')
+    const [search, setSearch] = useState('')
 
     const onChangeNameHandler = (event) =>
         setNewName(event.target.value)
 
     const onChangeNumberHandler = (event) =>
         setNewNumber(event.target.value)
+
+    const onChangeSearchHandler = (event) => 
+        setSearch(event.target.value)
 
     const onSubmitHandler = (event) => {
         event.preventDefault()
@@ -30,6 +34,10 @@ const App = () => {
     return (
     <>
     <h2>Phonebook</h2>
+        Search for: <input
+            value={search}
+            onChange={onChangeSearchHandler}/>
+    <h2>Add new</h2>
     <form onSubmit={onSubmitHandler}>
         <div>
             name: <input
@@ -46,7 +54,16 @@ const App = () => {
     <h2>Numbers</h2>
     <table>
         <tbody>
-            {person.map((person) => <tr key={person.id}><td>{person.name}</td><td>{person.number}</td></tr>)}
+            {person.map((person) => {
+                if (person.name.search(RegExp(search, 'i')) > -1)
+                {
+                return(
+                    <tr key={person.id}>
+                        <td>{person.name}</td>
+                        <td>{person.number}</td>
+                    </tr>)}
+                return true
+})}
         </tbody>
     </table>
     </>
