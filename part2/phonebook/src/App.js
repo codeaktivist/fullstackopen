@@ -10,7 +10,7 @@ const App = () => {
 
     const onSubmitHandler = (event) => {
         event.preventDefault()
-        setPerson(person.concat(newName))
+        person.includes(newName) ? alert(`${newName} is already in the phonebook`) : setPerson(person.concat(newName))
         setNewName('')
     }
 
