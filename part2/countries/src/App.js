@@ -42,7 +42,7 @@ const App = () => {
         }
         else
         {
-            return <ul>{results.map((a)=> <li key={a.cca3}>{a.name.common}</li>)}</ul>
+            return <ul>{results.map((a)=> <li key={a.cca3}>{a.name.common}&nbsp;<button onClick={() => setSearch(a.name.common)}>show</button></li>)}</ul>
         }
     }
     
