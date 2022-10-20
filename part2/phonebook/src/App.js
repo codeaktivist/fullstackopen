@@ -71,11 +71,17 @@ const App = () => {
 
     const onSubmitHandler = (event) => {
         event.preventDefault()
-        person.some((person) => person.name === newName) ? alert(`${newName} is already in the phonebook`) : setPerson(person.concat({
-            name: newName,
-            number: newNumber,
-            id: person.length + 1
-        }))
+        person.some((person) => person.name === newName) 
+            ? alert(`${newName} is already in the phonebook`) 
+            : axios
+                .post('http://localhost:3001/persons/', {
+                name: newName,
+                number: newNumber
+                })
+                .then(response => {
+                    setPerson(person.concat(response.data))
+                })
+        
         setNewName('')
         setNewNumber('')
     }
