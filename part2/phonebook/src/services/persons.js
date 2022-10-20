@@ -8,9 +8,18 @@ const create = (newPerson) => {
     )
 }
 
+const erase = (id) => {
+    console.log('erase: ', id)
+    return (
+        axios
+            .delete(`http://localhost:3001/persons/${id}`)
+            .then(response => response)
+    )
+}
+
 // const create = (newPerson) => {
 //     const request = axios.post('http://localhost:3001/persons/', newPerson)
 //     return request.then(response => response.data)
 // }
 
-export default {create: create}
+export default {create, erase}

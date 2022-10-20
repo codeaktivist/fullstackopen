@@ -13,7 +13,13 @@ const Search = ({ search, onChangeSearchHandler }) => {
     )
 }
 
-const Table = ({person, search }) => {
+const Table = ({person, search, setPerson }) => {
+    const deleteHandler = (pers) => () => {
+        if(window.confirm(`Delete ${pers.name} from the phonebook?`))
+        {
+            personService.erase(pers.id)
+                .then(() => setPerson(person.filter(p => p.id !== pers.id)))}
+        }
     console.log(person)
     return(
         <table>
@@ -25,6 +31,7 @@ const Table = ({person, search }) => {
                     <tr key={person.id}>
                         <td>{person.name}</td>
                         <td>{person.number}</td>
+                        <td><button onClick={deleteHandler(person)}>delete</button></td>
                     </tr>)}
                 return true
             })}
@@ -115,6 +122,7 @@ const App = () => {
         <Table
             person={person}
             search={search}
+            setPerson={setPerson}
         />
     </>
 )}
