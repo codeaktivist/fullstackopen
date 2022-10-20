@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 
+import personService from './services/persons'
+
 const Search = ({ search, onChangeSearchHandler }) => {
     return (
         <div>
@@ -12,6 +14,7 @@ const Search = ({ search, onChangeSearchHandler }) => {
 }
 
 const Table = ({person, search }) => {
+    console.log(person)
     return(
         <table>
         <tbody>
@@ -71,20 +74,27 @@ const App = () => {
 
     const onSubmitHandler = (event) => {
         event.preventDefault()
-        person.some((person) => person.name === newName) 
-            ? alert(`${newName} is already in the phonebook`) 
-            : axios
-                .post('http://localhost:3001/persons/', {
-                name: newName,
-                number: newNumber
+        const personObject = {
+            name: newName,
+            number: newNumber            
+        }
+        if (person.some(p => p.name === newName))
+        {
+            alert(`${newName} is already in the phonebook!`)
+        }
+        else
+        {
+            personService
+                .create(personObject)
+                .then(newPerson => {
+                    console.log('newPerson: ', newPerson)
+                    setPerson(person.concat(newPerson))
                 })
-                .then(response => {
-                    setPerson(person.concat(response.data))
-                })
-        
+        }
         setNewName('')
-        setNewNumber('')
+        setNewNumber('')                
     }
+    
 
     return (
     <>
