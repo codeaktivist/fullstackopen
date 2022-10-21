@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 
 import personService from './services/persons'
+import './index.css'
 
 const Search = ({ search, onChangeSearchHandler }) => {
     return (
@@ -58,11 +59,23 @@ const Form = ({ onSubmitHandler, onChangeNameHandler, newName, onChangeNumberHan
     )
 }
 
+const Notification = ({message}) => {
+    if (message === null)
+        return null
+    else
+    {
+        return (
+            <div className='message'>{message}</div>
+        )
+    }
+}
+
 const App = () => {
     const [person, setPerson] = useState([])
     const [newName, setNewName] = useState('')
     const [newNumber, setNewNumber] = useState('')
     const [search, setSearch] = useState('')
+    const [notification, setNotification] = useState(null)
 
     useEffect(() => {
         axios
@@ -91,7 +104,11 @@ const App = () => {
             {
                 personService
                     .update({...person.find(p => p.name === newName), number: newNumber})
-                    .then(response => setPerson(person.map(p => p.id === response.id ? response : p)))
+                    .then(response => {
+                        setPerson(person.map(p => p.id === response.id ? response : p))
+                        setNotification(`Number for ${response.name} updated`)
+                        setTimeout(() => setNotification(null), 2000)
+                    })
             }
         }
         else
@@ -101,6 +118,8 @@ const App = () => {
                 .then(newPerson => {
                     console.log('newPerson: ', newPerson)
                     setPerson(person.concat(newPerson))
+                    setNotification(`${newPerson.name} wurde hinzugefügt.`)
+                    setTimeout(() => setNotification(null), 2000)
                 })
         }
         setNewName('')
@@ -110,12 +129,13 @@ const App = () => {
 
     return (
     <>
-        <h2>Phonebook</h2>
+        <h1>Phonebook</h1>
+        <Notification message={notification}/>
         <Search
             search={search}
             onChangeSearchHandler={onChangeSearchHandler}
         />
-        <h3>Add new</h3>
+        <h2>Add new</h2>
         <Form 
             onSubmitHandler={onSubmitHandler}
             onChangeNameHandler={onChangeNameHandler}
@@ -123,7 +143,7 @@ const App = () => {
             newNumber={newNumber}
             onChangeNumberHandler={onChangeNumberHandler}
         />
-        <h3>Numbers</h3>
+        <h2>Numbers</h2>
         <Table
             person={person}
             search={search}

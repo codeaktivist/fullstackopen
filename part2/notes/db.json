@@ -4,13 +4,13 @@
       "id": 1,
       "content": "HTML is easy",
       "date": "2022-1-17T17:30:31.098Z",
-      "important": false
+      "important": true
     },
     {
       "id": 2,
       "content": "Browser can execute only JavaScript",
       "date": "2022-1-17T18:39:34.091Z",
-      "important": true
+      "important": false
     },
     {
       "id": 3,
@@ -21,8 +21,14 @@
     {
       "content": "I added the note via post request",
       "date": "2022-10-16T13:46:43.334Z",
-      "important": true,
+      "important": false,
       "id": 4
+    },
+    {
+      "content": "The last not for this session",
+      "date": "2022-10-21T15:15:57.871Z",
+      "important": true,
+      "id": 5
     }
   ]
 }
