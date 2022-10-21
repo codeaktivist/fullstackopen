@@ -28,4 +28,6 @@ const erase = (id) => {
     )
 }
 
-export default {create, update, erase}
+const exportObject = {create, update, erase}
+
+export default exportObject

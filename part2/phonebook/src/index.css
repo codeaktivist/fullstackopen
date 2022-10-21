@@ -2,12 +2,22 @@ h1 {
     color: goldenrod;
 }
 
-.message {
+.notification {
     border: 3px solid green;
     border-radius: 5px;
     padding: 10px 15px;
     margin: 10px 0px;
     background-color: lightgray;
     color: green;
+    font-size: larger;
+}
+
+.warning {
+    border: 3px solid red;
+    border-radius: 5px;
+    padding: 10px 15px;
+    margin: 10px 0px;
+    background-color: lightgray;
+    color: red;
     font-size: larger;
 }

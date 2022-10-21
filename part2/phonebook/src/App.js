@@ -14,12 +14,18 @@ const Search = ({ search, onChangeSearchHandler }) => {
     )
 }
 
-const Table = ({person, search, setPerson }) => {
+const Table = ({person, search, setPerson, setNotification, setWarning }) => {
     const deleteHandler = (pers) => () => {
         if(window.confirm(`Delete ${pers.name} from the phonebook?`))
         {
             personService.erase(pers.id)
-                .then(() => setPerson(person.filter(p => p.id !== pers.id)))}
+                // .then(() => setPerson(person.filter(p => p.id !== pers.id)))
+                .catch((err) => {
+                    setWarning(`${pers.name} was already deleted!`)
+                    setTimeout(() => setWarning(null), 2000)
+                })
+                .finally(() => setPerson(person.filter(p => p.id !== pers.id)))
+            }
         }
     console.log(person)
     return(
@@ -65,7 +71,18 @@ const Notification = ({message}) => {
     else
     {
         return (
-            <div className='message'>{message}</div>
+            <div className='notification'>{message}</div>
+        )
+    }
+}
+
+const Warning = ({message}) => {
+    if (message === null)
+        return null
+    else
+    {
+        return (
+            <div className='warning'>{message}</div>
         )
     }
 }
@@ -76,6 +93,7 @@ const App = () => {
     const [newNumber, setNewNumber] = useState('')
     const [search, setSearch] = useState('')
     const [notification, setNotification] = useState(null)
+    const [warning, setWarning] = useState(null)
 
     useEffect(() => {
         axios
@@ -118,7 +136,7 @@ const App = () => {
                 .then(newPerson => {
                     console.log('newPerson: ', newPerson)
                     setPerson(person.concat(newPerson))
-                    setNotification(`${newPerson.name} wurde hinzugefügt.`)
+                    setNotification(`${newPerson.name} was added.`)
                     setTimeout(() => setNotification(null), 2000)
                 })
         }
@@ -130,7 +148,8 @@ const App = () => {
     return (
     <>
         <h1>Phonebook</h1>
-        <Notification message={notification}/>
+        <Notification message={notification} />
+        <Warning message={warning} />
         <Search
             search={search}
             onChangeSearchHandler={onChangeSearchHandler}
@@ -148,6 +167,7 @@ const App = () => {
             person={person}
             search={search}
             setPerson={setPerson}
+            setWarning={setWarning}
         />
     </>
 )}
