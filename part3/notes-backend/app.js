@@ -9,12 +9,12 @@ const mongoose = require('mongoose')
 logger.info('connecting to', config.MONGODB_URI)
 
 mongoose.connect(config.MONGODB_URI)
-.then(result => {
-    logger.info('Connected to MongoDB')
-})
-.catch((error) => {
-    logger.error('Error connecting to database: ', error.message)
-})
+    .then(() => {
+        logger.info('Connected to MongoDB')
+    })
+    .catch((error) => {
+        logger.error('Error connecting to database: ', error.message)
+    })
 
 app.use(express.static('build'))
 app.use(express.json())
