@@ -28,31 +28,49 @@ const favoriteBlog = (blogs) => {
 }
 
 const mostBlogs = (blogs) => {
-    debugger // eslint-disable-line no-debugger
     const authors = new Map()
     blogs.map((b) => {
         (authors.has(b.author))
             ? authors.set(b.author, authors.get(b.author) + 1)
             : authors.set(b.author, 1)
     })
-    let mostAuthor = ''
-    let mostCount = 0
+    const bestAuthor = {
+        author: '',
+        blogs: 0
+    }
     authors.forEach((count, author) => {
-        console.log(author, count)
-        if (count >= mostCount) {
-            mostAuthor = author
-            mostCount = count
+        if (count >= bestAuthor.blogs) {
+            bestAuthor.author = author
+            bestAuthor.blogs = count
         }
     })
-    return {
-        author: mostAuthor,
-        blogs: mostCount
+    return bestAuthor
+}
+
+const mostLikes = (blogs) => {
+    const authors = new Map()
+    blogs.map(b => {
+        authors.has(b.author)
+            ? authors.set(b.author, authors.get(b.author) + b.likes)
+            : authors.set(b.author, b.likes)
+    })
+    const bestAuthor = {
+        author: '',
+        likes: 0
     }
+    authors.forEach((likes, author) => {
+        if (likes >= bestAuthor.likes) {
+            bestAuthor.author = author
+            bestAuthor.likes = likes
+        }
+    })
+    return bestAuthor
 }
 
 module.exports = {
     dummy,
     totalLikes,
     favoriteBlog,
-    mostBlogs
+    mostBlogs,
+    mostLikes
 }
