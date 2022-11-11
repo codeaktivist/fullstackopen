@@ -2,35 +2,30 @@ const logger = require('../utils/logger')
 const notesRouter = require('express').Router()
 const Note = require('../models/note')
 
-notesRouter.get('/', (request, response) => {
-    Note.find({}).then((notes) => {
-        response.json(notes)
-    })
+notesRouter.get('/', async (request, response) => {
+    const notes = await Note.find({})
+    response.json(notes)
 })
 
-notesRouter.get('/:id', (request, response, next) => {
+notesRouter.get('/:id', async (request, response) => {
     logger.info(`Searching for id ${request.params.id}`)
-    Note.findById(request.params.id)
-        .then(note => {
-            if (note) {
-                logger.info('Note detais: ', note)
-                response.status(202).json(note)
-            } else {
-                logger.info('Note not found')
-                response.status(404).json({ error: 'note not found' })
-            }
-        })
-        .catch((err) => next(err))
+    const searchedNote = await Note.findById(request.params.id)
+    if (searchedNote) {
+        response.status(202).json(searchedNote)
+    } else {
+        response.status(404).json({ error: 'note not found' })
+    }
 })
 
-notesRouter.delete('/:id', (request, response, next) => {
+notesRouter.delete('/:id', async (request, response) => {
     logger.info(`deleting note id ${request.params.id}`)
-    Note.findByIdAndRemove(request.params.id)
-        .then(result => {
-            response.status(204).end()
-            logger.info('Deleted Note: ', result)
-        })
-        .catch(err => next(err))
+    const noteToDelete = await Note.findById(request.params.id)
+    if (noteToDelete) {
+        await Note.findByIdAndDelete(request.params.id)
+        response.status(204).end()
+    } else {
+        response.status(404).json({ error: 'Note for deletion not found' } )
+    }
 })
 
 notesRouter.put('/:id', (request, response, next) => {
@@ -45,12 +40,8 @@ notesRouter.put('/:id', (request, response, next) => {
         .catch(err => next(err))
 })
 
-notesRouter.post('/', (request, response, next) => {
+notesRouter.post('/', async (request, response) => {
     const body = request.body
-
-    if (!body.content) {
-        return response.status(400).json({ error : 'Please provide description' })
-    }
 
     const note = new Note ({
         content: body.content,
@@ -58,11 +49,8 @@ notesRouter.post('/', (request, response, next) => {
         important: request.body.important || false
     })
 
-    note.save()
-        .then(savedNote => {
-            response.json(savedNote)
-        })
-        .catch(err => next(err))
+    const savedNote = await note.save()
+    response.status(201).json(savedNote)
 })
 
 module.exports = notesRouter

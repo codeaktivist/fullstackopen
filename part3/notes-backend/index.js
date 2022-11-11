@@ -5,6 +5,8 @@ const logger = require('./utils/logger')
 
 const server = http.createServer(app)
 
+logger.info(`App is running in ${process.env.NODE_ENV}-Mode`)
+
 server.listen((config.PORT), () => {
     logger.info(`Server is running on port ${config.PORT}`)
 })

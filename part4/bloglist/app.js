@@ -6,6 +6,7 @@ const config = require('./utils/config')
 const mongoose = require('mongoose')
 
 const app = express()
+logger.info(`App running in mode ${process.env.NODE_ENV}`)
 
 logger.info(`Connecting to URL: ${config.MONGO_URL}`)
 mongoose.connect(config.MONGO_URL)
