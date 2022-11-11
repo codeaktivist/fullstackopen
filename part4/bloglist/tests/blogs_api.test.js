@@ -19,6 +19,28 @@ test('get all blogs as JSON from server', async () => {
 })
 
 test('has an "id" named property', async () => {
-    const allBlogs = (await (await api.get('/api/blogs')).body)
+    const allBlogs = (await api.get('/api/blogs')).body
     expect(allBlogs[0]).toHaveProperty('id')
+})
+
+test('create a new blog post', async () => {
+    const newBlog = {
+        title: 'A test blog added by jest',
+        author: 'Jester',
+        url: 'http://jest.com',
+        likes: 1001
+    }
+    await Blog.create(new Blog(newBlog))
+    const allBlogs = (await api.get('/api/blogs')).body
+    const contents = allBlogs.map(b => {
+        return({
+            title: b.title,
+            author: b.author,
+            url: b.url,
+            likes: b.likes
+        })
+    })
+
+    expect(allBlogs).toHaveLength(helper.initialBlogs.length + 1)
+    expect(contents).toContainEqual(newBlog)
 })
