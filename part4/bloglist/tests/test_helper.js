@@ -1,3 +1,5 @@
+const Blog = require('../models/blog')
+
 const initialBlogs = [
     {
         title: 'My first blog',
@@ -13,6 +15,18 @@ const initialBlogs = [
     }
 ]
 
+const nonExistingId = async () => {
+    const toBeDeletedNote = new Blog({
+        title: 'A dummy note to delete',
+        author: 'Dummy',
+        url: 'http://delete.com'
+    })
+    await toBeDeletedNote.save()
+    await toBeDeletedNote.remove()
+    return toBeDeletedNote._id.toString()
+}
+
 module.exports = {
-    initialBlogs
+    initialBlogs,
+    nonExistingId
 }

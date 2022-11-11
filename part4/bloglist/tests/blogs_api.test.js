@@ -9,74 +9,133 @@ beforeAll(async () => {
     await Blog.insertMany(helper.initialBlogs)
 })
 
-test('get all blogs as JSON from server', async () => {
-    const response = await api
-        .get('/api/blogs')
-        .expect(200)
-        .expect('Content-Type', /application\/json/)
+describe('receiving exiting notes', () => {
+    test('get all blogs as JSON from server', async () => {
+        const response = await api
+            .get('/api/blogs')
+            .expect(200)
+            .expect('Content-Type', /application\/json/)
 
-    expect(response.body).toHaveLength(helper.initialBlogs.length)
-})
-
-test('has an "id" named property', async () => {
-    const allBlogs = (await api.get('/api/blogs')).body
-    expect(allBlogs[0]).toHaveProperty('id')
-})
-
-test('create a new blog post', async () => {
-    const newBlog = {
-        title: 'A test blog added by jest',
-        author: 'Jester',
-        url: 'http://jest.com',
-        likes: 1001
-    }
-    await Blog.create(new Blog(newBlog))
-    const allBlogs = (await api.get('/api/blogs')).body
-    const contents = allBlogs.map(b => {
-        return({
-            title: b.title,
-            author: b.author,
-            url: b.url,
-            likes: b.likes
-        })
+        expect(response.body).toHaveLength(helper.initialBlogs.length)
     })
 
-    expect(allBlogs).toHaveLength(helper.initialBlogs.length + 1)
-    expect(contents).toContainEqual(newBlog)
+    test('has an "id" named property', async () => {
+        const allBlogs = (await api.get('/api/blogs')).body
+        expect(allBlogs[0]).toHaveProperty('id')
+    })
 })
 
-test('missing like property defaults to zero likes', async () => {
-    const newNote = {
-        title: 'This blog has no like property',
-        author: 'Nolike',
-        url: 'http://nolike.com'
-    }
+describe('creating a note', () => {
+    test('create a new blog post', async () => {
+        const newBlog = {
+            title: 'A test blog added by jest',
+            author: 'Jester',
+            url: 'http://jest.com',
+            likes: 1001
+        }
+        await Blog.create(new Blog(newBlog))
+        const allBlogs = (await api.get('/api/blogs')).body
+        const contents = allBlogs.map(b => {
+            return({
+                title: b.title,
+                author: b.author,
+                url: b.url,
+                likes: b.likes
+            })
+        })
 
-    const response = await api
-        .post('/api/blogs')
-        .send(newNote)
+        expect(allBlogs).toHaveLength(helper.initialBlogs.length + 1)
+        expect(contents).toContainEqual(newBlog)
+    })
 
-    expect(response.body.likes).toBe(0)
+    test('missing like property defaults to zero likes', async () => {
+        const newNote = {
+            title: 'This blog has no like property',
+            author: 'Nolike',
+            url: 'http://nolike.com'
+        }
+
+        const response = await api
+            .post('/api/blogs')
+            .send(newNote)
+
+        expect(response.body.likes).toBe(0)
+    })
+
+    test('url and title must be present to create a new blog', async () => {
+        const blogNoTitle = {
+            author: 'NoTitle',
+            url: 'http://notitle.com'
+        }
+
+        await api
+            .post('/api/blogs')
+            .send(blogNoTitle)
+            .expect(400)
+
+        const blogNoUrl = {
+            title: 'Blog without url',
+            author: 'NoUrl'
+        }
+
+        await api
+            .post('/api/blogs')
+            .send(blogNoUrl)
+            .expect(400)
+    })
 })
 
-test('url and title must be present to create a new blog', async () => {
-    const blogNoTitle = {
-        author: 'NoTitle',
-        url: 'http://notitle.com'
-    }
+describe('modifying notes', () => {
+    test('update an existing note by id', async () => {
+        const oldBlog = await Blog.findOne({})
+        const newBlog = {
+            title: 'Update to my first Blog',
+            author: 'Update Martin First',
+            url: 'http://updateblog.com/1',
+            likes: 111
+        }
+        const result = await api
+            .put(`/api/blogs/${oldBlog._id.toString()}`)
+            .send(newBlog)
+            .expect(202)
+            .expect('Content-Type', /application\/json/)
 
-    await api
-        .post('/api/blogs')
-        .send(blogNoTitle)
-        .expect(400)
+        const resultBlog = result.body
+        delete resultBlog.id
+        expect(resultBlog).toEqual(newBlog)
+    })
 
-    const blogNoUrl = {
-        title: 'Blog without url',
-        author: 'NoUrl'
-    }
+    test('update an non-existing id will fail', async () => {
+        const newBlog = {
+            title: 'Update to non-existant Blog',
+            author: 'Update Not there First',
+            url: 'http://updatenotthere.com/1',
+            likes: 7
+        }
+        await api
+            .put(`/api/blogs/${await helper.nonExistingId()}`)
+            .send(newBlog)
+            .expect(404)
 
-    await api
-        .post('/api/blogs')
-        .send(blogNoUrl)
-        .expect(400)
+        const allBlogs = (await api.get('/api/blogs')).body
+        expect(allBlogs.map(b => b.url)).not.toContain(newBlog.url)
+    })
+})
+
+describe('deleting a note', () => {
+    test('with a valid / existing id', async () => {
+        const allBlogs = (await api.get('/api/blogs')).body
+        const response = await api
+            .delete(`/api/blogs/${allBlogs[0].id}`)
+            .expect(202)
+            .expect('Content-Type', /application\/json/)
+
+        expect(response.body).toEqual(allBlogs[0])
+    })
+
+    test('deleting a non existing note fails with 404', async () => {
+        await api
+            .delete(`/api/blogs/${await helper.nonExistingId()}`)
+            .expect(404)
+    })
 })
