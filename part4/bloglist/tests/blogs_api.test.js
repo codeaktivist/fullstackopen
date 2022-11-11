@@ -17,3 +17,8 @@ test('get all blogs as JSON from server', async () => {
 
     expect(response.body).toHaveLength(helper.initialBlogs.length)
 })
+
+test('has an "id" named property', async () => {
+    const allBlogs = (await (await api.get('/api/blogs')).body)
+    expect(allBlogs[0]).toHaveProperty('id')
+})
