@@ -52,6 +52,31 @@ test('missing like property defaults to zero likes', async () => {
         url: 'http://nolike.com'
     }
 
-    const response = await Blog.create(newNote)
-    expect(response.likes).toBe(0)
+    const response = await api
+        .post('/api/blogs')
+        .send(newNote)
+
+    expect(response.body.likes).toBe(0)
+})
+
+test('url and title must be present to create a new blog', async () => {
+    const blogNoTitle = {
+        author: 'NoTitle',
+        url: 'http://notitle.com'
+    }
+
+    await api
+        .post('/api/blogs')
+        .send(blogNoTitle)
+        .expect(400)
+
+    const blogNoUrl = {
+        title: 'Blog without url',
+        author: 'NoUrl'
+    }
+
+    await api
+        .post('/api/blogs')
+        .send(blogNoUrl)
+        .expect(400)
 })
