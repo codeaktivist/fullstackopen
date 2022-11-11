@@ -44,3 +44,14 @@ test('create a new blog post', async () => {
     expect(allBlogs).toHaveLength(helper.initialBlogs.length + 1)
     expect(contents).toContainEqual(newBlog)
 })
+
+test('missing like property defaults to zero likes', async () => {
+    const newNote = {
+        title: 'This blog has no like property',
+        author: 'Nolike',
+        url: 'http://nolike.com'
+    }
+
+    const response = await Blog.create(newNote)
+    expect(response.likes).toBe(0)
+})
