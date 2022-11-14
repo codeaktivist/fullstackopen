@@ -1,7 +1,8 @@
 POST http://localhost:3001/api/notes/
 Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im11c3RlciIsImlkIjoiNjM3MjEwNmQ5OGY5MmQ1NTA3Y2FhZmY5IiwiaWF0IjoxNjY4NDIxMDQ5LCJleHAiOjE2Njg0MjExMDl9.5mMGdUyY77UVTyKOCi5SEZjWH9xI1SkXwawyUhZwUEA
 
 {
-    "content": "The REST client in VS Code rocks!",
+    "content": "A note probably after token expiration",
     "important": true
 }
