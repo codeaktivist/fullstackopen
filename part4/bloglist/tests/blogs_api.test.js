@@ -1,5 +1,6 @@
 const supertest = require('supertest')
 const Blog = require('../models/blog')
+const User = require('../models/user')
 const helper = require('./test_helper')
 const app = require('../app')
 const api = supertest(app)
@@ -138,4 +139,92 @@ describe('deleting a note', () => {
             .delete(`/api/blogs/${await helper.nonExistingId()}`)
             .expect(404)
     })
+})
+
+describe('user administration', () => {
+    beforeAll(async () => {
+        await User.deleteMany({})
+    })
+
+    test('add a new user', async () => {
+        const usersAtStart = await User.find({})
+        const newUser = {
+            name: 'Muster',
+            username: 'muster',
+            password: 'easy'
+        }
+
+        const result = await api
+            .post('/api/users')
+            .send(newUser)
+            .expect(202)
+            .expect('Content-Type', /application\/json/)
+
+        expect(result.body.username).toEqual(newUser.username)
+
+        const usersAtEnd = await User.find({})
+        expect(usersAtEnd).toHaveLength(usersAtStart.length + 1)
+    })
+
+    test('creating a user with an existing username fails', async () => {
+        const usersAtStart = await User.find({})
+        const duplicateUser = {
+            name: 'Muster',
+            username: 'muster',
+            password: 'eas'
+        }
+
+        const result = await api
+            .post('/api/users')
+            .send(duplicateUser)
+            .expect(400)
+            .expect('Content-Type', /application\/json/)
+
+        expect(result.body.error).toEqual('username must be unique')
+
+        const usersAtEnd = await User.find({})
+        expect(usersAtEnd).toHaveLength(usersAtStart.length)
+
+    })
+
+    test('creating a user with short username fails', async () => {
+        const usersAtStart = await User.find({})
+        const duplicateUser = {
+            name: 'Muster',
+            username: 'mu',
+            password: 'easy'
+        }
+
+        const result = await api
+            .post('/api/users')
+            .send(duplicateUser)
+            .expect(400)
+            .expect('Content-Type', /application\/json/)
+
+        expect(result.body.error).toEqual('validation error')
+
+        const usersAtEnd = await User.find({})
+        expect(usersAtEnd).toHaveLength(usersAtStart.length)
+    })
+
+    test('creating a user with short password fails', async () => {
+        const usersAtStart = await User.find({})
+        const duplicateUser = {
+            name: 'Muster',
+            username: 'muster',
+            password: 'ea'
+        }
+
+        const result = await api
+            .post('/api/users')
+            .send(duplicateUser)
+            .expect(400)
+            .expect('Content-Type', /application\/json/)
+
+        expect(result.body.error).toEqual('password too short')
+
+        const usersAtEnd = await User.find({})
+        expect(usersAtEnd).toHaveLength(usersAtStart.length)
+    })
+
 })
