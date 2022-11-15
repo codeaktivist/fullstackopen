@@ -1,9 +1,10 @@
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImZyZWQiLCJpZCI6IjYzNzM1Zjk4ZTg1OGYzMmYyNTljOWY1NCIsImlhdCI6MTY2ODUwNTYwOCwiZXhwIjoxNjY4NTA5MjA4fQ.NkSfb8Byga5IOZxK6m-eyaMGZ_9gokIllAkvd0X6OHs
 
 {
-  "title": "7th Title",
-  "author": "7th Author",
-  "url": "http://blog.com/777",
+  "title": "Freds 6th Title",
+  "author": "Freds Author",
+  "url": "http://fred.com/7",
   "likes": 7
 }

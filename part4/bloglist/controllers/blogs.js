@@ -1,6 +1,7 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
 const User = require('../models/user')
+const jwt = require('jsonwebtoken')
 
 blogsRouter.get('/', async (request, response, next) => {
     try {
@@ -12,19 +13,36 @@ blogsRouter.get('/', async (request, response, next) => {
 })
 
 blogsRouter.post('/', async (request, response, next) => {
-    const firstUser = await User.findOne({})
+    // const authHeader = request.get('Authorization')
+    // if (!authHeader) {
+    //     return response.status(403).json({ error: 'No authorization header' })
+    // }
+
+    // const token = authHeader.toLocaleLowerCase().startsWith('bearer')
+    //     ? authHeader.substring(7)
+    //     : null
+
+    const token = request.token
+
+    const decodedUser = await jwt.decode(token, process.env.SECRET)
+    if (!decodedUser) {
+        return response.status(403).json({ error: 'Token validation failed' })
+    }
+
     const newBlog = new Blog({
         title: request.body.title,
         author: request.body.author,
         url: request.body.url,
         likes: request.body.likes,
-        userId: firstUser._id
+        userId: decodedUser.id
     })
     try {
         const result = await newBlog.save()
-        const authorUser = await User.findById(firstUser._id)
-        authorUser.blogs = authorUser.blogs.concat(result._id)
+
+        const authorUser = await User.findById(decodedUser.id)
+        authorUser.blogs = authorUser.blogs.concat(result.id)
         authorUser.save()
+
         response.status(201).json(result)
     } catch (error) {
         next(error)
