@@ -13,15 +13,6 @@ blogsRouter.get('/', async (request, response, next) => {
 })
 
 blogsRouter.post('/', async (request, response, next) => {
-    // const authHeader = request.get('Authorization')
-    // if (!authHeader) {
-    //     return response.status(403).json({ error: 'No authorization header' })
-    // }
-
-    // const token = authHeader.toLocaleLowerCase().startsWith('bearer')
-    //     ? authHeader.substring(7)
-    //     : null
-
     const token = request.token
 
     const decodedUser = await jwt.decode(token, process.env.SECRET)
@@ -74,12 +65,28 @@ blogsRouter.put('/:id', async (request, response, next) => {
 
 blogsRouter.delete('/:id', async (request, response, next) => {
     try {
-        const blog = await Blog.findByIdAndRemove(request.params.id)
-        if (blog) {
-            response.status(202).json(blog)
-        } else {
-            response.status(404).json({ error: 'note for deletion not found' })
+        const decodedUser = await jwt.decode(request.token, process.env.SECRET)
+        if (!decodedUser) {
+            return response.status(403).json({ error: 'token validation error'})
         }
+
+        const blog = await Blog.findById(request.params.id)
+
+        if (!blog) {
+            return response.status(404).json({ error: 'note for deletion not found' })
+        }
+
+        if (blog.userId.toString() !== decodedUser.id.toString()) {
+            return response.status(403).json({ error: 'only author can delete blog' })
+        }
+
+        const author = await User.findById(blog.userId)
+        author.blogs = author.blogs.map(b => b.userId === author._id ? null : b)
+        author.save()
+
+        await Blog.findByIdAndRemove(request.params.id)
+
+        response.status(202).json(blog)
     } catch (error) {
         next(error)
     }
