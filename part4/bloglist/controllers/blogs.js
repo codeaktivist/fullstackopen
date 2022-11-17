@@ -17,7 +17,7 @@ blogsRouter.post('/', async (request, response, next) => {
 
     const decodedUser = await jwt.decode(token, process.env.SECRET)
     if (!decodedUser) {
-        return response.status(403).json({ error: 'Token validation failed' })
+        return response.status(401).json({ error: 'Token validation failed' })
     }
 
     const newBlog = new Blog({
@@ -69,7 +69,7 @@ blogsRouter.delete('/:id', async (request, response, next) => {
         const user = request.user
 
         if (!user) {
-            return response.status(403).json({ error: 'token authentication error, user not identified' })
+            return response.status(401).json({ error: 'token authentication error, user not identified' })
         }
 
         if (!blog) {
@@ -77,7 +77,7 @@ blogsRouter.delete('/:id', async (request, response, next) => {
         }
 
         if (blog.userId.toString() !== user.id.toString()) {
-            return response.status(403).json({ error: 'only author can delete blog' })
+            return response.status(401).json({ error: 'only author can delete blog' })
         }
 
         user.blogs = user.blogs.map(b => b.userId === user._id ? null : b)
