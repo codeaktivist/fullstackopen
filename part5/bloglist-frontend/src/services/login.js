@@ -6,6 +6,11 @@ const loginUser = async ({ username, password }) => {
         const result = await axios
             .post(baseUrl, { username, password })
 
+        if (result.data && result.data.token) {
+            window.localStorage.setItem('user', JSON.stringify(result.data))
+            console.log(window.localStorage.getItem('user'))
+        }
+
         return result.data
     } catch (error) {
         console.log('ERROR', error)

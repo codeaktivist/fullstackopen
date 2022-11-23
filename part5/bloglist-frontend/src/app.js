@@ -17,6 +17,13 @@ const App = () => {
             .then((blogs) => setBlogs(blogs))
     },[])
 
+    useEffect(() => {
+        const storedUser = window.localStorage.getItem('user')
+        if (storedUser) {
+            setUser(JSON.parse(storedUser))
+        }
+    },[])
+
     if (user === null) {
         return(
             <div>
@@ -40,8 +47,6 @@ const App = () => {
             </div>
         )
     }
-
-
 }
 
 export default App
