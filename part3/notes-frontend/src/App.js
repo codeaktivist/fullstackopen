@@ -10,6 +10,8 @@ const App = () => {
   const [newNote, setNewNote] = useState('')
   const [showAll, setShowAll] = useState(true)
   const [errorMessage, setErrorMessage] = useState(null)
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
 
   useEffect(() => {
     console.log('effect')
@@ -22,6 +24,7 @@ const App = () => {
   }, [])
 
   console.log('render', notes.length, 'notes');
+
 
   const addNote = (event) => {
     event.preventDefault()
@@ -62,17 +65,49 @@ const App = () => {
 
   const handleNoteChange = (event) => {
     console.log(event.target.value)
-    setNewNote(event.target.value)
   }
 
   const notesToShow = showAll
     ? notes
     : notes.filter(n => n.important)
 
+  const LoginForm = () => {
+    const handleLogin = (event) => {
+        event.preventDefault()
+        console.log(`logging in with ${username} and ${password}`)
+    }
+    return (
+        <div>
+            <form onSubmit={handleLogin}>
+                <div>
+                    Username
+                        <input
+                            type='text'
+                            name='username'
+                            value={username}
+                            onChange= {({target}) => {setUsername(target.value)}}
+                            />
+                </div>
+                    Password
+                        <input
+                            type='password'
+                            name='password'
+                            value={password}
+                            onChange={({target}) => {setPassword(target.value)}}
+                            />
+                <button type='submit'>login</button>
+            </form>
+        </div>
+        )
+  }
+
   return (
     <div>
       <h1>Notes</h1>
       <Notification message={errorMessage} />
+      <div>
+        <LoginForm />
+      </div>
       <div>
         <button onClick={() => setShowAll(!showAll)}>
           show {showAll ? 'important' : 'all' }

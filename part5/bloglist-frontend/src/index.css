@@ -1,0 +1,27 @@
+h1 {
+    color:red;
+}
+
+.blog {
+    padding-bottom: 1em;
+}
+
+.title {
+    font-weight: bold;
+}
+
+.author {
+    font-style: italic;
+}
+
+.url a:link, a:visited {
+    color: orange;
+}
+
+.url a:hover {
+    color: lightcoral;
+}
+
+.likes {
+    color: green;
+}

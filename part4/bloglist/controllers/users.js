@@ -10,7 +10,7 @@ userRouter.get('/', async (request, response) => {
 
 userRouter.post('/', async (request, response, next) => {
     const { username, name, password } = request.body
-    if (password.length < 3)
+    if (!password || password.length < 3)
         return response.status(400).json({ error: 'password too short' })
 
     const existingUser = await User.findOne({ username })
@@ -29,7 +29,7 @@ userRouter.post('/', async (request, response, next) => {
 
     try {
         const result = await newUser.save()
-        response.status(202).json(result)
+        response.status(201).json(result)
     } catch (error) {
         next(error)
     }
