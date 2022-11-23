@@ -12,4 +12,20 @@ const getAll = async () => {
     }
 }
 
-export default { getAll }
+const create = async (newBlog) => {
+    const config = {
+        headers: { 'Authorization': `bearer ${newBlog.token}` }
+    }
+
+    try {
+        const response = await axios
+            .post(baseUrl, newBlog, config)
+
+        return response
+    } catch (error) {
+        console.log(error)
+        throw (error)
+    }
+}
+
+export default { getAll, create }

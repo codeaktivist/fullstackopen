@@ -35,9 +35,9 @@ const Login = (props) => {
                     value={props.password}
                     onChange={({ target }) => props.setPassword(target.value)}></input>
             </div>
-            <div>
+            <p>
                 <button type='submit'>Login</button>
-            </div>
+            </p>
         </form>
     )
 }
