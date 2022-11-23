@@ -1,6 +1,7 @@
 import loginService from '../services/login'
 
 const Login = (props) => {
+
     const loginHandler = async (event) => {
         event.preventDefault()
 
@@ -10,7 +11,11 @@ const Login = (props) => {
                 props.setUser(user)
             }
         } catch (error) {
-            alert(error.response.data.error)
+            props.setNotification({
+                type: 'warning',
+                text: error.response.data.error
+            })
+            setTimeout(() => props.setNotification(null), 3000)
         } finally {
             props.setUsername('')
             props.setPassword('')

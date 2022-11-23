@@ -3,6 +3,7 @@ import Blogs from './components/Blogs'
 import Login from './components/Login'
 import Create from './components/Create'
 import Logout from './components/Logout'
+import Notification from './components/Notification'
 import blogService from './services/blogs'
 import './index.css'
 
@@ -18,6 +19,7 @@ const App = () => {
     const [user, setUser] = useState(null)
     const [blogs, setBlogs] = useState([])
     const [newBlog, setNewBlog] = useState(emptyBlog)
+    const [notification, setNotification] = useState(null)
 
     useEffect(() => {
         blogService.getAll()
@@ -35,19 +37,26 @@ const App = () => {
         return(
             <div>
                 <h1>Please log in</h1>
+                {notification === null || <Notification
+                    type={notification.type}
+                    text={notification.text}/>}
                 <Login
                     username={username}
                     setUsername={setUsername}
                     password={password}
                     setPassword={setPassword}
                     user={user}
-                    setUser={setUser}/>
+                    setUser={setUser}
+                    setNotification={setNotification}/>
             </div>
         )
     } else {
         return(
             <div>
                 <h1>Bloglist</h1>
+                {notification === null || <Notification
+                    type={notification.type}
+                    text={notification.text}/>}
                 <Logout setUser={setUser} />
                 <p>Logged-in as {user.name}</p>
                 <Create
@@ -55,8 +64,9 @@ const App = () => {
                     setNewBlog={setNewBlog}
                     user={user}
                     blogs={blogs}
+                    emptyBlog={emptyBlog}
                     setBlogs={setBlogs}
-                    emptyBlog={emptyBlog}/>
+                    setNotification={setNotification}/>
                 <h2>Blogs in Database</h2>
                 <Blogs blogs={blogs} />
             </div>

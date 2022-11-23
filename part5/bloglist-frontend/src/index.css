@@ -25,3 +25,21 @@ h1 {
 .likes {
     color: green;
 }
+
+.notification {
+    font-size: 120%;
+    background-color: lightgray;
+    padding: 5px 10px;
+    border-radius: 5px;
+    margin: 10px 0px 20px 0px;
+}
+
+.notification.warning {
+    color:red;
+    border: 2px solid red;
+}
+
+.notification.info {
+    color:green;
+    border: 2px solid green;
+}
