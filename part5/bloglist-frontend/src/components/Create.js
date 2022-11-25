@@ -1,12 +1,21 @@
+import { useState } from 'react'
 import blogService from '../services/blogs'
 
 const Create = (props) => {
+    const emptyBlog = {
+        title: '',
+        author: '',
+        url: ''
+    }
+
+    const [newBlog, setNewBlog] = useState(emptyBlog)
+
     const submitHandler = async (event) => {
         event.preventDefault()
 
         try {
             const response = await blogService.create({
-                ...props.newBlog,
+                ...newBlog,
                 token: props.user.token })
             if (response && response.data) {
                 props.setBlogs(props.blogs.concat(response.data))
@@ -23,7 +32,7 @@ const Create = (props) => {
             })
             setTimeout(() => props.setNotification(null), 3000)
         } finally {
-            props.setNewBlog(props.emptyBlog)
+            setNewBlog(emptyBlog)
             props.toggleRef.current.toggleVisible()
         }
     }
@@ -36,10 +45,10 @@ const Create = (props) => {
                     Title:<input
                         type='text'
                         name='title'
-                        value={props.newBlog.title}
+                        value={newBlog.title}
                         onChange={({ target }) => {
-                            props.setNewBlog({
-                                ...props.newBlog,
+                            setNewBlog({
+                                ...newBlog,
                                 title: target.value }
                             )}}>
                     </input>
@@ -48,10 +57,10 @@ const Create = (props) => {
                     Author:<input
                         type='text'
                         name='author'
-                        value={props.newBlog.author}
+                        value={newBlog.author}
                         onChange={({ target }) => {
-                            props.setNewBlog({
-                                ...props.newBlog,
+                            setNewBlog({
+                                ...newBlog,
                                 author: target.value }
                             )}}>
                     </input>
@@ -60,10 +69,10 @@ const Create = (props) => {
                     Url:<input
                         type='text'
                         name='url'
-                        value={props.newBlog.url}
+                        value={newBlog.url}
                         onChange={({ target }) => {
-                            props.setNewBlog({
-                                ...props.newBlog,
+                            setNewBlog({
+                                ...newBlog,
                                 url: target.value }
                             )}}>
                     </input>

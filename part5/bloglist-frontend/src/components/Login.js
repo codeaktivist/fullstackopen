@@ -1,12 +1,16 @@
+import { useState } from 'react'
 import loginService from '../services/login'
 
 const Login = (props) => {
+    const [username, setUsername] = useState('')
+    const [password, setPassword] = useState('')
+
 
     const loginHandler = async (event) => {
         event.preventDefault()
 
         try {
-            const user = await loginService.loginUser({ username: props.username, password: props.password })
+            const user = await loginService.loginUser({ username: username, password: password })
             if (user && user.token) {
                 props.setUser(user)
             }
@@ -17,8 +21,8 @@ const Login = (props) => {
             })
             setTimeout(() => props.setNotification(null), 3000)
         } finally {
-            props.setUsername('')
-            props.setPassword('')
+            setUsername('')
+            setPassword('')
         }
 
     }
@@ -29,16 +33,16 @@ const Login = (props) => {
                 Username:
                 <input
                     type='text'
-                    value={props.username}
-                    onChange={({ target }) => props.setUsername(target.value)}>
+                    value={username}
+                    onChange={({ target }) => setUsername(target.value)}>
                 </input>
             </div>
             <div>
                 Password:
                 <input
                     type='password'
-                    value={props.password}
-                    onChange={({ target }) => props.setPassword(target.value)}></input>
+                    value={password}
+                    onChange={({ target }) => setPassword(target.value)}></input>
             </div>
             <p>
                 <button type='submit'>Login</button>
