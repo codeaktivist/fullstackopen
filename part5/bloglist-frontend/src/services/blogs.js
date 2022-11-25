@@ -28,4 +28,17 @@ const create = async (newBlog) => {
     }
 }
 
-export default { getAll, create }
+const addLike = async (blog) => {
+    const likedBlog = {
+        ...blog,
+        likes: blog.likes + 1
+    }
+    try {
+        await axios
+            .put(`${baseUrl}/${blog.id}`, likedBlog)
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+export default { getAll, create, addLike }
