@@ -24,6 +24,7 @@ const Create = (props) => {
             setTimeout(() => props.setNotification(null), 3000)
         } finally {
             props.setNewBlog(props.emptyBlog)
+            props.toggleRef.current.toggleVisible()
         }
     }
 
