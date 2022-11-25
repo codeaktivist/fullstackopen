@@ -3,7 +3,10 @@ h1 {
 }
 
 .blog {
-    padding-bottom: 1em;
+    border: 2px solid black;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 20px 0px;
 }
 
 .title {

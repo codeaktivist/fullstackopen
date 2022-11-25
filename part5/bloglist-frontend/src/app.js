@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import Blogs from './components/Blogs'
+import Blog from './components/Blog'
 import Login from './components/Login'
 import Toggleable from './components/Toggleable'
 import Create from './components/Create'
@@ -58,7 +58,7 @@ const App = () => {
                         toggleRef={toggleRef}/>
                 </Toggleable>
                 <h2>Blogs in Database</h2>
-                <Blogs blogs={blogs} />
+                {blogs.map(blog => <Blog key={blog.id} blog={blog} />)}
             </div>
         )
     }
