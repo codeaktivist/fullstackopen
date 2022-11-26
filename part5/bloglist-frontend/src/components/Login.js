@@ -10,7 +10,7 @@ const Login = (props) => {
         event.preventDefault()
 
         try {
-            const user = await loginService.loginUser({ username: username, password: password })
+            const user = await loginService.loginUser({ username, password })
             if (user && user.token) {
                 props.setUser(user)
             }
@@ -24,7 +24,6 @@ const Login = (props) => {
             setUsername('')
             setPassword('')
         }
-
     }
 
     return (

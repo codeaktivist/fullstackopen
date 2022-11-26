@@ -13,9 +13,15 @@ const App = () => {
     const [blogs, setBlogs] = useState([])
     const [notification, setNotification] = useState(null)
 
+    // REWORK LATER, THIS FETCHES ALL BLOGS FROM SERVER ON ADDED LIKE
+    // Passed all the way down to App>Blog>Details to re-render when adding a like
+    const rerender = () => {
+        blogService.getAll()
+            .then((blogs) => setBlogs(blogs.sort((a, b) => b.likes - a.likes)))}
+
     useEffect(() => {
         blogService.getAll()
-            .then((blogs) => setBlogs(blogs))
+            .then((blogs) => setBlogs(blogs.sort((a, b) => b.likes - a.likes)))
     },[])
 
     useEffect(() => {
@@ -58,7 +64,13 @@ const App = () => {
                         toggleRef={toggleRef}/>
                 </Toggleable>
                 <h2>Blogs in Database</h2>
-                {blogs.map(blog => <Blog key={blog.id} blog={blog} />)}
+                {
+                    blogs
+                        .map(blog => <Blog
+                            key={blog.id}
+                            blog={blog}
+                            rerender={rerender}/>)
+                }
             </div>
         )
     }

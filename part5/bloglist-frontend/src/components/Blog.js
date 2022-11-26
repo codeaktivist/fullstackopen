@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import Details from './Details'
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, rerender }) => {
     const [showDetails, setShowDetails] = useState(false)
 
     return (
@@ -13,7 +13,7 @@ const Blog = ({ blog }) => {
                 </button></div>
 
             {showDetails
-                ? <Details blog={blog} />
+                ? <Details blog={blog} rerender={rerender}/>
                 : false
             }
         </div>
