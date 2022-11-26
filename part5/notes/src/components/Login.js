@@ -1,12 +1,13 @@
 import { useState } from 'react'
+import PropTypes from 'prop-types'
 import noteService from '../services/notes'
 import loginService from '../services/login'
 
 const LoginForm = ({ setUser, setErrorMessage }) => {
 
-    const [username, setUsername] = useState('') 
+    const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
-  
+
     const handleUsernameChange = ({ target }) => setUsername(target.value)
     const handlePasswordChange = ({ target }) => setPassword(target.value)
 
@@ -15,11 +16,11 @@ const LoginForm = ({ setUser, setErrorMessage }) => {
         console.log('logging in with', username, password)
         try {
             const user = await loginService({ username, password })
-            
+
             window.localStorage.setItem(
                 'loggedNoteappUser', JSON.stringify(user)
             )
-    
+
             noteService.setToken(user.token)
             setUser(user)
             setUsername('')
@@ -31,32 +32,37 @@ const LoginForm = ({ setUser, setErrorMessage }) => {
                 setErrorMessage(null)
             }, 5000)
         }
-      }
+    }
 
     return(
-      <form onSubmit={handleLogin}>
-        <div>
-          username
-            <input
-            type="text"
-            value={username}
-            name="Username"
-            onChange={handleUsernameChange}
-          />
-        </div>
-        <div>
-          password
-            <input
-            type="password"
-            value={password}
-            name="Password"
-            onChange={handlePasswordChange}
-          />
-        </div>
-        <button type="submit">login</button>
-      </form>
+        <form onSubmit={handleLogin}>
+            <div>
+                username
+                <input
+                    type="text"
+                    value={username}
+                    name="Username"
+                    onChange={handleUsernameChange}
+                />
+            </div>
+            <div>
+                password
+                <input
+                    type="password"
+                    value={password}
+                    name="Password"
+                    onChange={handlePasswordChange}
+                />
+            </div>
+            <button type="submit">login</button>
+        </form>
 
     )
+}
+
+LoginForm.propTypes = {
+    setUser: PropTypes.func.isRequired,
+    setErrorMessage: PropTypes.func.isRequired
 }
 
 export default LoginForm

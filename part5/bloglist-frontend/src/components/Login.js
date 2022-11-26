@@ -5,7 +5,6 @@ const Login = (props) => {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
 
-
     const loginHandler = async (event) => {
         event.preventDefault()
 

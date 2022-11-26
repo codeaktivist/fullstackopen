@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import blogService from '../services/blogs'
 
-const Details = ({ blog, rerender }) => {
+const Details = ({ blog, user, rerender }) => {
     // const [likes, setLikes] = useState(blog.likes)
     const [thisBlog, setThisBlog] = useState(blog)
 
-    const onClickHandler = async () => {
+    const likeHandler = async () => {
         // await blogService.addLike(blog)
         // setLikes(likes + 1)
         setThisBlog({
@@ -14,7 +14,13 @@ const Details = ({ blog, rerender }) => {
         })
         await blogService.addLike(thisBlog)
         rerender()
+    }
 
+    const removeHandler = async () => {
+        if (window.confirm(`Remove blog: ${blog.title}`)) {
+            await blogService.remove(blog.id, user.token)
+            rerender()
+        }
     }
 
     return (
@@ -23,8 +29,14 @@ const Details = ({ blog, rerender }) => {
             <div className='url'><a href={blog.url}>{blog.url}</a></div>
             <div className='likes'>
                 Likes: {thisBlog.likes}
-                <button onClick={onClickHandler}>like</button>
+                <button onClick={likeHandler}>like</button>
             </div>
+            {user.userId === (blog.userId.id || blog.userId)
+                ? <div>
+                    <button onClick={removeHandler}>delete</button>
+                </div>
+                : false
+            }
         </>
     )
 }

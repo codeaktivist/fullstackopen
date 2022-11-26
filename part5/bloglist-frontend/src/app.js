@@ -13,7 +13,7 @@ const App = () => {
     const [blogs, setBlogs] = useState([])
     const [notification, setNotification] = useState(null)
 
-    // REWORK LATER, THIS FETCHES ALL BLOGS FROM SERVER ON ADDED LIKE
+    // REWORK! THIS FETCHES ALL BLOGS FROM SERVER ON ADDED LIKE
     // Passed all the way down to App>Blog>Details to re-render when adding a like
     const rerender = () => {
         blogService.getAll()
@@ -31,6 +31,7 @@ const App = () => {
         }
     },[])
 
+    // Reference to toggle visibility
     const toggleRef = useRef()
 
     if (user === null) {
@@ -69,6 +70,7 @@ const App = () => {
                         .map(blog => <Blog
                             key={blog.id}
                             blog={blog}
+                            user={user}
                             rerender={rerender}/>)
                 }
             </div>

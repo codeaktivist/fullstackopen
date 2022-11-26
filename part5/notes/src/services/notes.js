@@ -8,24 +8,24 @@ const setToken = newToken => {
 }
 
 const getAll = () => {
-  const request = axios.get(baseUrl)
+    const request = axios.get(baseUrl)
 
-  return request.then(response => response.data)
+    return request.then(response => response.data)
 }
 
 const create = newObject => {
-  const config = {
-    headers:
-      { Authorization: token}
-  }
+    const config = {
+        headers:
+        { Authorization: token }
+    }
 
-  const request = axios.post(baseUrl, newObject, config)
-  return request.then(response => response.data)
+    const request = axios.post(baseUrl, newObject, config)
+    return request.then(response => response.data)
 }
 
 const update = (id, newObject) => {
-  const request = axios.put(`${baseUrl}/${id}`, newObject)
-  return request.then(response => response.data)
+    const request = axios.put(`${baseUrl}/${id}`, newObject)
+    return request.then(response => response.data)
 }
 
 const exports = { getAll, create, update, setToken }
