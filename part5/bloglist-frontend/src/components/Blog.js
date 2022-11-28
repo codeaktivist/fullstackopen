@@ -1,8 +1,9 @@
 import { useState } from 'react'
-import Details from './Details'
+// import blogService from '../services/blogs'
 import PropTypes from 'prop-types'
+import Details from './Details'
 
-const Blog = ({ blog, rerender, user }) => {
+const Blog = ({ blog, likeHandler, removeHandler , user }) => {
     const [showDetails, setShowDetails] = useState(false)
 
     return (
@@ -17,7 +18,8 @@ const Blog = ({ blog, rerender, user }) => {
                 ? <Details
                     blog={blog}
                     user={user}
-                    rerender={rerender}/>
+                    likeHandler={likeHandler}
+                    removeHandler={removeHandler}/>
                 : false
             }
         </div>
@@ -26,8 +28,9 @@ const Blog = ({ blog, rerender, user }) => {
 
 Blog.propTypes = {
     blog: PropTypes.object.isRequired,
-    rerender: PropTypes.func.isRequired,
-    user: PropTypes.object.isRequired
+    user: PropTypes.object.isRequired,
+    likeHandler: PropTypes.func.isRequired,
+    removeHandler: PropTypes.func.isRequired
 }
 
 export default Blog

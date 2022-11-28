@@ -28,27 +28,23 @@ const create = async (newBlog) => {
     }
 }
 
-const addLike = async (blog) => {
-    const likedBlog = {
-        ...blog,
-        likes: blog.likes + 1
-    }
+const addLike = async (likedBlog) => {
     try {
         await axios
-            .put(`${baseUrl}/${blog.id}`, likedBlog)
+            .put(`${baseUrl}/${likedBlog.id}`, likedBlog)
     } catch (error) {
         console.log(error)
     }
 }
 
-const remove = async (blogId, token) => {
+const remove = async (deletedBlog, token) => {
     const config = {
         headers: { 'Authorization': `bearer ${token}` }
     }
 
     try {
         await axios
-            .delete(`${baseUrl}/${blogId}`, config)
+            .delete(`${baseUrl}/${deletedBlog}`, config)
     } catch (error) {
         console.log(error)
     }

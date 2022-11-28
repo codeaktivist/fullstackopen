@@ -9,15 +9,17 @@ import blogService from './services/blogs'
 import './index.css'
 
 const App = () => {
+    const emptyBlog = {
+        title: '',
+        author: '',
+        url: ''
+    }
+
     const [user, setUser] = useState(null)
     const [blogs, setBlogs] = useState([])
     const [notification, setNotification] = useState(null)
+    const [newBlog, setNewBlog] = useState(emptyBlog)
 
-    // REWORK! THIS FETCHES ALL BLOGS FROM SERVER ON ADDED LIKE
-    // Passed all the way down to App>Blog>Details to re-render when adding a like
-    const rerender = () => {
-        blogService.getAll()
-            .then((blogs) => setBlogs(blogs.sort((a, b) => b.likes - a.likes)))}
 
     useEffect(() => {
         blogService.getAll()
@@ -30,6 +32,55 @@ const App = () => {
             setUser(JSON.parse(storedUser))
         }
     },[])
+
+    const likeHandler = async (blog) => {
+        const likedBlog = {
+            ...blog,
+            likes: blog.likes + 1,
+        }
+
+        setBlogs(blogs
+            .map(b => b.id === likedBlog.id ? likedBlog : b)
+            .sort((a, b) => b.likes - a.likes))
+
+        await blogService.addLike(likedBlog)
+    }
+
+    const removeHandler = async (deletedBlog) => {
+        if (window.confirm(`Remove blog: ${deletedBlog.title}`)) {
+            setBlogs(blogs
+                .filter((b) => b.id !== deletedBlog.id))
+
+            await blogService.remove(deletedBlog.id, user.token)
+        }
+    }
+
+    const submitHandler = async (event) => {
+        event.preventDefault()
+
+        try {
+            const response = await blogService.create({
+                ...newBlog,
+                token: user.token })
+            if (response && response.data) {
+                setBlogs(blogs.concat(response.data))
+                setNotification({
+                    type: 'info',
+                    text: `Created: ${response.data.title}`
+                })
+                setTimeout(() => setNotification(null), 3000)
+            }
+        } catch (error) {
+            setNotification({
+                type: 'warning',
+                text: error.response.data.error
+            })
+            setTimeout(() => setNotification(null), 3000)
+        } finally {
+            setNewBlog(emptyBlog)
+            toggleRef.current.toggleVisible()
+        }
+    }
 
     // Reference to toggle visibility
     const toggleRef = useRef()
@@ -58,20 +109,19 @@ const App = () => {
                 <p>Logged-in as {user.name}</p>
                 <Toggleable ref={toggleRef}>
                     <Create
-                        user={user}
-                        blogs={blogs}
-                        setBlogs={setBlogs}
-                        setNotification={setNotification}
-                        toggleRef={toggleRef}/>
+                        submitHandler={submitHandler}
+                        newBlog={newBlog}
+                        setNewBlog={setNewBlog}/>
                 </Toggleable>
                 <h2>Blogs in Database</h2>
                 {
                     blogs
                         .map(blog => <Blog
                             key={blog.id}
-                            blog={blog}
                             user={user}
-                            rerender={rerender}/>)
+                            blog={blog}
+                            likeHandler={() => likeHandler(blog)}
+                            removeHandler={() => removeHandler(blog)}/>)
                 }
             </div>
         )

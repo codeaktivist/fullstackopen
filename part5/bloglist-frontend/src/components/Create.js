@@ -1,48 +1,14 @@
-import { useState } from 'react'
-import blogService from '../services/blogs'
-
-const Create = (props) => {
-    const emptyBlog = {
-        title: '',
-        author: '',
-        url: ''
-    }
-
-    const [newBlog, setNewBlog] = useState(emptyBlog)
-
-    const submitHandler = async (event) => {
-        event.preventDefault()
-
-        try {
-            const response = await blogService.create({
-                ...newBlog,
-                token: props.user.token })
-            if (response && response.data) {
-                props.setBlogs(props.blogs.concat(response.data))
-                props.setNotification({
-                    type: 'info',
-                    text: `Created: ${response.data.title}`
-                })
-                setTimeout(() => props.setNotification(null), 3000)
-            }
-        } catch (error) {
-            props.setNotification({
-                type: 'warning',
-                text: error.response.data.error
-            })
-            setTimeout(() => props.setNotification(null), 3000)
-        } finally {
-            setNewBlog(emptyBlog)
-            props.toggleRef.current.toggleVisible()
-        }
-    }
-
+const Create = ({ submitHandler, newBlog, setNewBlog }) => {
     return (
         <>
             <h2>Create new Blog</h2>
             <form onSubmit={submitHandler}>
                 <div>
-                    Title:<input
+                    <label htmlFor='titleInput'>
+                        Title:
+                    </label>
+                    <input
+                        id='titleInput'
                         type='text'
                         name='title'
                         value={newBlog.title}
@@ -54,7 +20,11 @@ const Create = (props) => {
                     </input>
                 </div>
                 <div>
-                    Author:<input
+                    <label htmlFor='authorInput'>
+                        Author:
+                    </label>
+                    <input
+                        id='authorInput'
                         type='text'
                         name='author'
                         value={newBlog.author}
@@ -66,7 +36,11 @@ const Create = (props) => {
                     </input>
                 </div>
                 <div>
-                    Url:<input
+                    <label htmlFor='urlInput'>
+                        Url:
+                    </label>
+                    <input
+                        id='urlInput'
                         type='text'
                         name='url'
                         value={newBlog.url}
