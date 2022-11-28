@@ -27,7 +27,7 @@ const Details = ({ blog, user, rerender }) => {
                 Likes: {thisBlog.likes}
                 <button onClick={likeHandler}>like</button>
             </div>
-            {user.userId === (blog.userId.id || blog.userId)
+            {user.userId === (blog.userId?.id || blog.userId)
                 ? <div>
                     <button onClick={removeHandler}>delete</button>
                 </div>
