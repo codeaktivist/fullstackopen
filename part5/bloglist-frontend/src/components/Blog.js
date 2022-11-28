@@ -8,7 +8,7 @@ const Blog = ({ blog, rerender, user }) => {
     return (
         <div className='blog' key={blog.id}>
             <div className='title'>
-                {blog.title}
+                {blog.title} (by {blog.author})
                 <button onClick={() => setShowDetails(!showDetails)}>
                     {showDetails ? 'hide' : 'show' }
                 </button></div>

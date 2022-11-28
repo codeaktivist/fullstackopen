@@ -3,6 +3,9 @@
 # temp Apps
 /temp
 
+#config
+jsconfig.json
+
 # misc
 .DS_Store
 .vscode
