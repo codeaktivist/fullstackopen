@@ -3,6 +3,9 @@
 # temp Apps
 /temp
 
+# testing data
+coverage/
+
 #config
 jsconfig.json
 

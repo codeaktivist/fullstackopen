@@ -6,7 +6,8 @@
   "scripts": {
     "start": "react-scripts start",
     "test": "react-scripts test",
-    "lint": "eslint"
+    "lint": "eslint",
+    "cypress:open": "cypress open"
   },
   "eslintConfig": {
     "extends": [
@@ -46,7 +47,9 @@
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^14.4.3",
+    "cypress": "^11.2.0",
     "eslint": "^8.28.0",
+    "eslint-plugin-cypress": "^2.12.1",
     "eslint-plugin-jest": "^27.1.6",
     "eslint-plugin-react": "^7.31.11"
   }

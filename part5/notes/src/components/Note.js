@@ -27,7 +27,7 @@ const Note = ({ note, notes, setNotes, setErrorMessage }) => {
 
     return (
         <li className="note">
-            {note.content}
+            <span>{note.content}</span>
             <button onClick={() => toggleImportanceOf(note.id)}>{label}</button>
         </li>
     )
