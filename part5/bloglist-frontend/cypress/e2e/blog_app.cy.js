@@ -5,6 +5,12 @@ describe('Blog app', () => {
         password: 'asdf'
     }
 
+    const newBlog = {
+        title: 'A new note via cypress',
+        author: 'Cypress Hill',
+        url: 'www.cypress.de'
+    }
+
     beforeEach(() => {
 
         cy.request('POST', 'http://localhost:3003/api/testing/reset')
@@ -61,6 +67,43 @@ describe('Blog app', () => {
             cy.contains('wrong password')
                 .should('have.css', 'border-color', 'rgb(255, 0, 0)')     
                 .and('have.class', 'notification warning')     
+        })
+    })
+
+    describe('when logged-in', () => {
+        beforeEach(() => {
+            cy.request({
+                method: 'POST',
+                url: 'http://localhost:3000/api/login',
+                body: { username: newUser.username, password: newUser.password }
+            })
+                .then(response => {
+                    cy.log(response.body)
+                    localStorage.setItem('user', JSON.stringify(response.body))
+                })
+            // cy.createBlog('First Blog', 'Mr. First', 'www.first.de')
+            cy.createBlog('Second Blog', 'Mr. First', 'www.first.de')
+            cy.createBlog('Third Blog', 'Mr. First', 'www.first.de')
+
+            cy.visit('http://localhost:3000/')
+        })
+
+        it.only('A blog can be created', () => {
+            cy.contains('Create new note')
+                .click()
+            cy.get('#titleInput').type(newBlog.title)
+            cy.get('#authorInput').type(newBlog.author)
+            cy.get('#urlInput').type(newBlog.url)
+
+            cy.intercept('http://localhost:3000/api/blogs').as('waitForBlog')
+            cy.get('button')
+                .contains('Save')
+                .click()
+            cy.wait('@waitForBlog')
+
+            cy.get('.blog')
+                .get('.title')
+                .contains(newBlog.title)
         })
     })
 })

@@ -20,6 +20,8 @@ blogsRouter.post('/', async (request, response, next) => {
         return response.status(401).json({ error: 'Token validation failed' })
     }
 
+    // REWORK: An old token for a non-existing user also validates
+
     const newBlog = new Blog({
         title: request.body.title,
         author: request.body.author,

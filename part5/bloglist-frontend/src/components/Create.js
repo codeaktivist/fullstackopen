@@ -52,7 +52,7 @@ const Create = ({ submitHandler, newBlog, setNewBlog }) => {
                     </input>
                 </div>
                 <p>
-                    <button type='submit'>Create</button>
+                    <button type='submit'>Save</button>
                 </p>
             </form>
         </>
