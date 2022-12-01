@@ -12,22 +12,14 @@ describe('Blog app', () => {
     }
 
     beforeEach(() => {
-
         cy.request('POST', 'http://localhost:3003/api/testing/reset')
             .then(response => {
                 expect(response.status).eq(204)
             })
-        cy.request({
-            method: 'POST',
-            url: 'http://localhost:3003/api/users',
-            body: newUser
-        })
-            .then(response => {
-                expect(response.body.username).eq(newUser.username)
-            })
-
+        cy.createUser(newUser)
         cy.visit('http://localhost:3000/')
     })
+
     it('login form is shown', () => {
         cy.contains('Please log in')
 
@@ -71,18 +63,10 @@ describe('Blog app', () => {
 
     describe('when logged-in', () => {
         beforeEach(() => {
-            cy.request({
-                method: 'POST',
-                url: 'http://localhost:3000/api/login',
-                body: { username: newUser.username, password: newUser.password }
-            })
-                .then(response => {
-                    localStorage.setItem('user', JSON.stringify(response.body))
-                })
+            cy.login({ username: newUser.username, password: newUser.password })
             cy.createBlog('First Blog', 'Mr. First', 'www.first.de')
-            cy.createBlog('Second Blog', 'Mr. First', 'www.first.de')
-            cy.createBlog('Third Blog', 'Mr. First', 'www.first.de')
-
+            cy.createBlog('Second Blog', 'Mr. Second', 'www.second.de')
+            cy.createBlog('Third Blog', 'Mr. Third', 'www.third.de')
             cy.visit('http://localhost:3000/')
         })
 
@@ -106,8 +90,6 @@ describe('Blog app', () => {
         })
 
         it('A blog can be liked', () => {
-            let likesBefore, likesAfter
-
             cy.get('.blog:first')
                 .as('firstBlog')
 
@@ -157,37 +139,60 @@ describe('Blog app', () => {
                 password: 'jklö'
             }
 
-            localStorage.clear()
-
-            cy.request({
-                method: 'POST',
-                url: 'http://localhost:3003/api/users',
-                body: anotherUser
-            })
-
-            cy.request({
-                method: 'POST',
-                url: 'http://localhost:3000/api/login',
-                body: { username: anotherUser.username, password: anotherUser.password }
-            })
-                .then(response => {
-                    localStorage.setItem('user', JSON.stringify(response.body))
-                })
-
-
+            cy.createUser(anotherUser)
+            cy.login({ username: anotherUser.username, password: anotherUser.password })
             cy.visit('http://localhost:3000/')
 
             cy.get('.blog:first')
-            .as('firstBlog')
-            .find('button')
-            .should('contain', 'show')
-            .click()
+                .as('firstBlog')
+                .find('button')
+                .should('contain', 'show')
+                .click()
         
             cy.get('@firstBlog')
                 .within($div => {
                     cy.get('button')
                         .should('not.contain', 'delete')
                 })
+        })
+
+        it('Blogs are sorted by likes', () => {
+            cy.get('.blog')
+                .as('blogs')
+
+            cy.get('@blogs')
+                .eq(0)
+                .as('firstBlog')
+
+            cy.expand('@firstBlog')
+            cy.addLike('@firstBlog')
+
+            cy.get('@blogs')
+                .eq(1)
+                .as('secondBlog')
+
+            cy.expand('@secondBlog')
+            cy.addLike('@secondBlog')
+            cy.addLike('@secondBlog')
+
+            cy.get('@blogs')
+                .eq(2)
+                .as('thirdBlog')
+
+            cy.expand('@thirdBlog')
+            cy.addLike('@thirdBlog')
+            cy.addLike('@thirdBlog')
+            cy.addLike('@thirdBlog')
+
+            cy.get('.blog')
+                .eq(0)
+                .should('contain', 'Third Blog')
+            cy.get('.blog')
+                .eq(1)
+                .should('contain', 'Second Blog')     
+            cy.get('.blog')
+                .eq(2)
+                .should('contain', 'First Blog')
         })
     })
 })
