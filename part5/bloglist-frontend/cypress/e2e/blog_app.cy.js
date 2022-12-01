@@ -81,14 +81,14 @@ describe('Blog app', () => {
                     cy.log(response.body)
                     localStorage.setItem('user', JSON.stringify(response.body))
                 })
-            // cy.createBlog('First Blog', 'Mr. First', 'www.first.de')
+            cy.createBlog('First Blog', 'Mr. First', 'www.first.de')
             cy.createBlog('Second Blog', 'Mr. First', 'www.first.de')
             cy.createBlog('Third Blog', 'Mr. First', 'www.first.de')
 
             cy.visit('http://localhost:3000/')
         })
 
-        it.only('A blog can be created', () => {
+        it('A blog can be created', () => {
             cy.contains('Create new note')
                 .click()
             cy.get('#titleInput').type(newBlog.title)
@@ -104,6 +104,35 @@ describe('Blog app', () => {
             cy.get('.blog')
                 .get('.title')
                 .contains(newBlog.title)
+        })
+
+        it('A blog can be liked', () => {
+            let likesBefore, likesAfter
+
+            cy.get('.blog:first')
+                .as('firstBlog')
+
+            cy.get('@firstBlog')
+                .find('button')
+                .should('contain', 'show')
+                .click()
+                
+            cy.get('@firstBlog')
+                .find('.likes')
+                .invoke('text')
+                .then(before => Number(before.replace('Likes: ', '').replace('like', '')))
+                .then(likesBefore => {
+                    cy.get('@firstBlog')
+                        .find('.likes')
+                        .find('button')
+                        .should('contain', 'like')
+                        .click()
+                    cy.get('@firstBlog')
+                        .find('.likes')
+                        .invoke('text')
+                        .then(after => Number(after.replace('Likes: ', '').replace('like', '')))
+                        .should('eq', likesBefore + 1)
+                })
         })
     })
 })
