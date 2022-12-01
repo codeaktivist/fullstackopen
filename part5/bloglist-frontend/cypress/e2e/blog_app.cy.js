@@ -23,7 +23,6 @@ describe('Blog app', () => {
             body: newUser
         })
             .then(response => {
-                cy.log(response)
                 expect(response.body.username).eq(newUser.username)
             })
 
@@ -78,7 +77,6 @@ describe('Blog app', () => {
                 body: { username: newUser.username, password: newUser.password }
             })
                 .then(response => {
-                    cy.log(response.body)
                     localStorage.setItem('user', JSON.stringify(response.body))
                 })
             cy.createBlog('First Blog', 'Mr. First', 'www.first.de')
@@ -100,6 +98,7 @@ describe('Blog app', () => {
                 .contains('Save')
                 .click()
             cy.wait('@waitForBlog')
+            cy.contains(newBlog.title)
 
             cy.get('.blog')
                 .get('.title')
@@ -132,6 +131,62 @@ describe('Blog app', () => {
                         .invoke('text')
                         .then(after => Number(after.replace('Likes: ', '').replace('like', '')))
                         .should('eq', likesBefore + 1)
+                })
+        })
+
+        it('A user can delete her/his own blog', () => {
+            cy.get('.blog:first')
+                .as('firstBlog')
+                .find('button')
+                .should('contain', 'show')
+                .click()
+            
+            cy.get('@firstBlog')
+                .within($div => {
+                    cy.get('button')
+                        .contains('delete')
+                        .click()
+                })
+                .should('not.exist')
+        })
+
+        it('A user can not delete anothers users blogs', () => {
+            const anotherUser = {
+                name: 'Dani',
+                username: 'dani',
+                password: 'jklö'
+            }
+
+            localStorage.clear()
+
+            cy.request({
+                method: 'POST',
+                url: 'http://localhost:3003/api/users',
+                body: anotherUser
+            })
+
+            cy.request({
+                method: 'POST',
+                url: 'http://localhost:3000/api/login',
+                body: { username: anotherUser.username, password: anotherUser.password }
+            })
+                .then(response => {
+                    localStorage.setItem('user', JSON.stringify(response.body))
+                })
+
+
+            cy.visit('http://localhost:3000/')
+
+            cy.get('.blog:first')
+            .as('firstBlog')
+            .find('button')
+            .should('contain', 'show')
+            .click()
+        
+            cy.get('@firstBlog')
+                .within($div => {
+                    cy.get('button')
+                        .should('not.contain', 'delete')
                 })
         })
     })
