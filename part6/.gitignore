@@ -1,0 +1,8 @@
+# test and temp files
+/counter
+/notes-redux
+
+
+# misc
+.DS_Store
+.env
