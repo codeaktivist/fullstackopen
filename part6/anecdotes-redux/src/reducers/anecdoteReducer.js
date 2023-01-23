@@ -12,12 +12,8 @@ const anecdoteSlice = createSlice({
     name: 'anecdotes',
     initialState,
     reducers: {
-        newAnecdote(state, action) {
-            state.push({
-                content: action.payload,
-                id: getId(),
-                votes: 0
-            })
+        createAnecdote(state, action) {
+            state.push(action.payload)
             return sortByVotes(state)
         },
         voteAnecdote(state, action) {
@@ -34,5 +30,5 @@ const anecdoteSlice = createSlice({
     }
 })
 
-export const { newAnecdote, voteAnecdote, appendAnecdote } = anecdoteSlice.actions
+export const { createAnecdote, voteAnecdote, appendAnecdote } = anecdoteSlice.actions
 export default anecdoteSlice.reducer
