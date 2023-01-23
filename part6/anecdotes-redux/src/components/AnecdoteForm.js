@@ -21,7 +21,8 @@ const AnecdoteForm = () => {
         }, 2000);
 
         dispatch(setNotification({
-            message: 'Added: ' + content
+            message: 'Added: ' + content,
+            timeoutId
         }))
     }
 
