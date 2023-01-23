@@ -6,6 +6,7 @@ const AnecdoteList = () => {
     const dispatch = useDispatch()
     const anecdotes = useSelector(state => state.anecdotes)
     const notification = useSelector(state => state.notification)
+    const filter = useSelector(state => state.filter)
 
     const vote = (id) => {
         dispatch(voteAnecdote(id))
@@ -23,7 +24,9 @@ const AnecdoteList = () => {
     }
 
     return (
-        anecdotes.map(a =>
+        anecdotes
+            .filter(a => a.content.includes(filter.keyword))
+            .map(a =>
             <div key={a.id}>
                 <div>
                     {a.content}
