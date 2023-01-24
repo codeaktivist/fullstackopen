@@ -13,4 +13,13 @@ const createNew = async (content) => {
     return response.data
 }
 
-export default { getAll, createNew } //eslint-disable-line
+const updateAnecdote = async (id) => {
+    const anecdoteToVote = await axios.get(`${baseUrl}/${id}`)
+    const anecdoteVoted = {
+        votes: anecdoteToVote.data.votes + 1
+    }
+    const response = await axios.patch(`${baseUrl}/${id}`, anecdoteVoted)
+    return response.data
+}
+
+export default { getAll, createNew, updateAnecdote } //eslint-disable-line
