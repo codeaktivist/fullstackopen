@@ -11,7 +11,10 @@ const App = () => {
 
     const result = useQuery('anecdotes', () => axios
         .get('http://localhost:3001/anecdotes')
-        .then(res => res.data))
+        .then(res => res.data),
+        {
+            retry: 1
+        })
 
     if (result.isLoading) {
         console.log(result);
