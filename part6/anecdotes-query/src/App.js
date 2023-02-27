@@ -23,11 +23,11 @@ const App = () => {
         .get('http://localhost:3001/anecdotes')
         .then(res => res.data),
         {
+            refetchOnWindowFocus: false,
             retry: 1
         })
 
     if (result.isLoading) {
-        console.log(result);
         return (
             <div>loading data ...</div>
         )
