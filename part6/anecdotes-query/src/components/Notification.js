@@ -1,8 +1,7 @@
-import { useContext } from "react"
-import { NoteContext } from "../NoteContext"
+import { useNoteOnly } from "../NoteContext"
 
 const Notification = () => {
-    const [note, noteDispatch] = useContext(NoteContext)
+    const note = useNoteOnly()
     const style = {
         border: 'solid',
         padding: 10,

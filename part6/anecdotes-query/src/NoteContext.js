@@ -1,4 +1,4 @@
-import { createContext, useReducer } from 'react'
+import { createContext, useContext, useReducer } from 'react'
 
 export const NoteContext = createContext()
 
@@ -32,6 +32,11 @@ export const NoteContextProvider = (props) => {
             {props.children}
         </NoteContext.Provider>
     )
+}
+
+export const useNoteOnly = () => {
+    const noteAndDispatch = useContext(NoteContext)
+    return noteAndDispatch[0]
 }
 
 export default noteReducer
