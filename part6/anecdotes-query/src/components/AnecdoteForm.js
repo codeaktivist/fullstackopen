@@ -1,7 +1,10 @@
-import { useQueryClient, useMutation } from 'react-query'
 import axios from 'axios'
+import { useQueryClient, useMutation } from 'react-query'
+import { useContext } from 'react'
+import { NoteContext } from "../NoteContext"
 
 const AnecdoteForm = () => {
+    const [note, noteDispatch] = useContext(NoteContext)
     const queryClient = useQueryClient()
     const createMutation = useMutation(content => {
         axios
@@ -22,7 +25,15 @@ const AnecdoteForm = () => {
         const content = event.target.anecdote.value
         event.target.anecdote.value = ''
         createMutation.mutate(content)
-        console.log('new anecdote')
+
+        clearTimeout(note.id)
+        const timeoutId = setTimeout(() => noteDispatch({type: 'HIDE'}), 5000)
+
+        noteDispatch({
+            type: 'SHOW',
+            text: 'Created new: ' + content,
+            id: timeoutId,
+        })
     }
 
     return (
