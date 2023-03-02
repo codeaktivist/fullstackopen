@@ -7,17 +7,29 @@ const AnecdoteForm = () => {
     const [note, noteDispatch] = useContext(NoteContext)
     const queryClient = useQueryClient()
     const createMutation = useMutation(content => {
-        axios
+        return axios
             .post('http://localhost:3001/anecdotes',
                 {
                     content,
                     votes: 0
                 })
-            .then(res => res.data)
+            .then(res => {
+                return res.data
+            })
     }, {
         onSuccess: () => {
             queryClient.invalidateQueries('anecdotes')
-        }
+        },
+        onError: () => {
+            clearTimeout(note.id)
+            const timeoutId = setTimeout(() => noteDispatch({ type: 'HIDE' }), 5000)
+
+            noteDispatch({
+                type: 'SHOW',
+                text: 'Too short, must have a length of five',
+                id: timeoutId,
+            })
+        },
     })
 
     const onCreate = (event) => {
@@ -27,7 +39,7 @@ const AnecdoteForm = () => {
         createMutation.mutate(content)
 
         clearTimeout(note.id)
-        const timeoutId = setTimeout(() => noteDispatch({type: 'HIDE'}), 5000)
+        const timeoutId = setTimeout(() => noteDispatch({ type: 'HIDE' }), 5000)
 
         noteDispatch({
             type: 'SHOW',
