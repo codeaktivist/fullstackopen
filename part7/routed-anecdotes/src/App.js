@@ -1,11 +1,11 @@
 import { useState } from "react";
 import {
-  BrowserRouter as Router,
   Routes,
   Route,
   Link,
   useMatch,
   Navigate,
+  useNavigate,
 } from "react-router-dom";
 
 const Menu = () => {
@@ -27,13 +27,15 @@ const Menu = () => {
   );
 };
 
-const AnecdoteList = ({ anecdotes }) => (
+const AnecdoteList = ({ anecdotes, vote }) => (
   <div>
     <h2>Anecdotes</h2>
     <ul>
       {anecdotes.map((anecdote) => (
         <li key={anecdote.id}>
           <Link to={`/anecdotes/${anecdote.id}`}>{anecdote.content}</Link>
+          {" "}
+          <button onClick={() => vote(anecdote.id)}>vote</button>
         </li>
       ))}
     </ul>
@@ -139,6 +141,14 @@ const Footer = () => {
   );
 };
 
+const Notification = ({ notification }) => {
+  if (notification) {
+    return <div>{notification}</div>;
+  } else {
+    return null;
+  }
+};
+
 const App = () => {
   const [anecdotes, setAnecdotes] = useState([
     {
@@ -157,12 +167,20 @@ const App = () => {
     },
   ]);
 
-  const [notification, setNotification] = useState("");
+  const defaultNotification = {
+    timeoutId: null,
+    text: null,
+  }
+  const [notification, setNotification] = useState(defaultNotification);
+
+  const navigate = useNavigate();
 
   const addNew = (anecdote) => {
     anecdote.id = Math.round(Math.random() * 10000);
     setAnecdotes(anecdotes.concat(anecdote));
-  };
+    navigate("/");
+    notificationService(`New anecdote created: ${anecdote.content}`, 5000)
+};
 
   const anecdoteById = (id) => anecdotes.find((a) => a.id === id);
 
@@ -175,7 +193,19 @@ const App = () => {
     };
 
     setAnecdotes(anecdotes.map((a) => (a.id === id ? voted : a)));
+    notificationService(`Voted for: ${anecdote.content}`, 1000)
   };
+
+  const notificationService = (text, time ) => {
+    if (notification.timeoutId) {
+        clearTimeout(notification.timeoutId);
+    }
+    const id = setTimeout(() => setNotification(defaultNotification), time || 3000)
+    setNotification({
+        timeoutId: id,
+        text: text,
+    })
+  }
 
   const match = useMatch("/anecdotes/:id");
   const anecdote = match
@@ -186,8 +216,9 @@ const App = () => {
     <div>
       <h1>Software anecdotes</h1>
       <Menu />
+      <Notification notification={notification.text}/>
       <Routes>
-        <Route path="/" element={<AnecdoteList anecdotes={anecdotes} />} />
+        <Route path="/" element={<AnecdoteList anecdotes={anecdotes} vote={vote} />} />
         <Route path="/anecdotes" element={<Navigate replace to="/" />} />
         <Route
           path="/anecdotes/:id"
