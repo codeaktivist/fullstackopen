@@ -4,7 +4,8 @@ import {
   Routes,
   Route,
   Link,
-  useParams,
+  useMatch,
+  Navigate,
 } from "react-router-dom";
 
 const Menu = () => {
@@ -39,9 +40,7 @@ const AnecdoteList = ({ anecdotes }) => (
   </div>
 );
 
-const Anecdote = ({ anecdotes }) => {
-  const id = useParams().id;
-  const anecdote = anecdotes.find((a) => a.id === Number(id));
+const Anecdote = ({ anecdote }) => {
   return (
     <div>
       <h2>
@@ -178,21 +177,31 @@ const App = () => {
     setAnecdotes(anecdotes.map((a) => (a.id === id ? voted : a)));
   };
 
+  const match = useMatch("/anecdotes/:id");
+  const anecdote = match
+    ? anecdotes.find((a) => a.id === Number(match.params.id))
+    : null;
+
   return (
     <div>
       <h1>Software anecdotes</h1>
-      <Router>
-        <Menu />
-        <Routes>
-          <Route path="/" element={<AnecdoteList anecdotes={anecdotes} />} />
-          <Route
-            path="/anecdotes/:id"
-            element={<Anecdote anecdotes={anecdotes} />}
-          />
-          <Route path="/about" element={<About />} />
-          <Route path="/create" element={<CreateNew addNew={addNew} />} />
-        </Routes>
-      </Router>
+      <Menu />
+      <Routes>
+        <Route path="/" element={<AnecdoteList anecdotes={anecdotes} />} />
+        <Route path="/anecdotes" element={<Navigate replace to="/" />} />
+        <Route
+          path="/anecdotes/:id"
+          element={
+            anecdote ? (
+              <Anecdote anecdote={anecdote} />
+            ) : (
+              <Navigate replace to="/" />
+            )
+          }
+        />
+        <Route path="/about" element={<About />} />
+        <Route path="/create" element={<CreateNew addNew={addNew} />} />
+      </Routes>
       <Footer />
     </div>
   );
