@@ -7,6 +7,7 @@ import {
   Navigate,
   useNavigate,
 } from "react-router-dom";
+import { useField } from "./hooks";
 
 const Menu = () => {
   const padding = {
@@ -33,8 +34,7 @@ const AnecdoteList = ({ anecdotes, vote }) => (
     <ul>
       {anecdotes.map((anecdote) => (
         <li key={anecdote.id}>
-          <Link to={`/anecdotes/${anecdote.id}`}>{anecdote.content}</Link>
-          {" "}
+          <Link to={`/anecdotes/${anecdote.id}`}>{anecdote.content}</Link>{" "}
           <button onClick={() => vote(anecdote.id)}>vote</button>
         </li>
       ))}
@@ -57,16 +57,16 @@ const Anecdote = ({ anecdote }) => {
 };
 
 const CreateNew = (props) => {
-  const [content, setContent] = useState("");
-  const [author, setAuthor] = useState("");
-  const [info, setInfo] = useState("");
+  const content = useField('text');
+  const author = useField('text');
+  const info = useField('text');
 
   const handleSubmit = (e) => {
     e.preventDefault();
     props.addNew({
-      content,
-      author,
-      info,
+      content: content.value,
+      author: author.value,
+      info: info.value,
       votes: 0,
     });
   };
@@ -77,27 +77,15 @@ const CreateNew = (props) => {
       <form onSubmit={handleSubmit}>
         <div>
           content
-          <input
-            name="content"
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-          />
+          <input {...content} />
         </div>
         <div>
           author
-          <input
-            name="author"
-            value={author}
-            onChange={(e) => setAuthor(e.target.value)}
-          />
+          <input {...author} />
         </div>
         <div>
           url for more info
-          <input
-            name="info"
-            value={info}
-            onChange={(e) => setInfo(e.target.value)}
-          />
+          <input {...info} />
         </div>
         <button>create</button>
       </form>
@@ -170,7 +158,7 @@ const App = () => {
   const defaultNotification = {
     timeoutId: null,
     text: null,
-  }
+  };
   const [notification, setNotification] = useState(defaultNotification);
 
   const navigate = useNavigate();
@@ -179,8 +167,8 @@ const App = () => {
     anecdote.id = Math.round(Math.random() * 10000);
     setAnecdotes(anecdotes.concat(anecdote));
     navigate("/");
-    notificationService(`New anecdote created: ${anecdote.content}`, 5000)
-};
+    notificationService(`New anecdote created: ${anecdote.content}`, 5000);
+  };
 
   const anecdoteById = (id) => anecdotes.find((a) => a.id === id);
 
@@ -193,19 +181,22 @@ const App = () => {
     };
 
     setAnecdotes(anecdotes.map((a) => (a.id === id ? voted : a)));
-    notificationService(`Voted for: ${anecdote.content}`, 1000)
+    notificationService(`Voted for: ${anecdote.content}`, 1000);
   };
 
-  const notificationService = (text, time ) => {
+  const notificationService = (text, time) => {
     if (notification.timeoutId) {
-        clearTimeout(notification.timeoutId);
+      clearTimeout(notification.timeoutId);
     }
-    const id = setTimeout(() => setNotification(defaultNotification), time || 3000)
+    const id = setTimeout(
+      () => setNotification(defaultNotification),
+      time || 3000
+    );
     setNotification({
-        timeoutId: id,
-        text: text,
-    })
-  }
+      timeoutId: id,
+      text: text,
+    });
+  };
 
   const match = useMatch("/anecdotes/:id");
   const anecdote = match
@@ -216,9 +207,12 @@ const App = () => {
     <div>
       <h1>Software anecdotes</h1>
       <Menu />
-      <Notification notification={notification.text}/>
+      <Notification notification={notification.text} />
       <Routes>
-        <Route path="/" element={<AnecdoteList anecdotes={anecdotes} vote={vote} />} />
+        <Route
+          path="/"
+          element={<AnecdoteList anecdotes={anecdotes} vote={vote} />}
+        />
         <Route path="/anecdotes" element={<Navigate replace to="/" />} />
         <Route
           path="/anecdotes/:id"
